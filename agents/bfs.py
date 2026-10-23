@@ -1,0 +1,11 @@
+from base import BaseAgent
+from puzzle8 import Puzzle8, Action
+
+class BFSAgent(BaseAgent):
+    def __init__(self, initial_board: Puzzle8):
+        super(initial_board)
+        # Initialise data structure and other attributes here
+        
+    def solve(self):
+        # Add implementation here
+        pass
