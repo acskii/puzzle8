@@ -12,7 +12,7 @@ class Puzzle8:
     complete_state: list = [0, 1, 2, 3, 4, 5, 6, 7, 8]
 
     def __init__(self, board: list):
-        if self._verify_board(board): 
+        if Puzzle8.verify_board(board): 
             self._board = board
             self._complete = False
         else:
@@ -23,14 +23,65 @@ class Puzzle8:
         self._cost = 0
 
     # Make sure board is valid
-    def _verify_board(board: list):
-        return len(board) == 9 and all(0 <= x <= 8 for x in board)
+    @staticmethod
+    def verify_board(board: list):
+        return (
+            len(board) == 9 and 
+            all(0 <= x <= 8 for x in board) and 
+            sorted(board) == Puzzle8.complete_state
+        )
 
-    def get_possible_actions(self):
-        return
+    # Check if board has reached complete state
+    def _check_complete(self):
+        return self._board == Puzzle8.complete_state
 
+    # Checks current location of the empty space
+    # Then: determines which actions are possible
+    #     => if 0 is at start of row -> no left
+    #     => if 0 is at end of row -> no right
+    #     => if 0 is at start of column -> no up
+    #     => if 0 is at end of column -> no down
+    def get_possible_actions(self) -> list:
+        empty_index: int = self._board.index(0)
+        possible_actions: list = [Action.Up, Action.Down, Action.Left, Action.Right]
+
+        if empty_index % 3 == 0:  possible_actions.remove(Action.Left) # Remove left
+        if empty_index % 3 == 2:  possible_actions.remove(Action.Right) # Remove right
+        if 0 <= empty_index <= 2: possible_actions.remove(Action.Up) # Remove up
+        if 6 <= empty_index <= 8: possible_actions.remove(Action.Down) # Remove down
+
+        return possible_actions
+
+    # Moves empty space based on given action
+    # Only allows valid actions based on current board state
     def move(self, action: Action):
-        pass
+        possible_action: list = self.get_possible_actions()
+
+        try:
+            empty_index: int = self._board.index(0)
+            match action:
+                # Swap empty space with spot 3 indexes away
+                case Action.Up:
+                    self._board[empty_index], self._board[empty_index - 3] = self._board[empty_index - 3], self._board[empty_index]
+
+                case Action.Down:
+                    self._board[empty_index], self._board[empty_index + 3] = self._board[empty_index + 3], self._board[empty_index]
+
+                # Swap empty space with spot before or after
+                case Action.Left:
+                    self._board[empty_index], self._board[empty_index - 1] = self._board[empty_index - 1], self._board[empty_index]
+                
+                case Action.Right:
+                    self._board[empty_index], self._board[empty_index + 1] = self._board[empty_index + 1], self._board[empty_index]
+
+            # Increment move cost
+            self._cost += 1
+            # Update complete flag
+            self._complete = self._check_complete()
+
+        except ValueError:
+            print("Attempted to move empty space with invalid action at current state, no moves done")
+            return
 
     def get_cost(self):
         return self._cost
@@ -42,4 +93,5 @@ class Puzzle8:
         return self._complete
 
     def __str__(self):
-        return ", ".join(self._board)
+        t = [str(x) for x in self._board]
+        return ", ".join(t)
