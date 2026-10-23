@@ -95,3 +95,8 @@ class Puzzle8:
     def __str__(self):
         t = [str(x) for x in self._board]
         return ", ".join(t)
+
+    # Returns the current state of board in a 3x3 block format
+    def pretty(self):
+        b = [str(x) for x in self._board]
+        return f"\n{b[0]} | {b[1]} | {b[2]}\n---------\n{b[3]} | {b[4]} | {b[5]}\n---------\n{b[6]} | {b[7]} | {b[8]}\n"
