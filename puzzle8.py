@@ -14,11 +14,9 @@ class Puzzle8:
     def __init__(self, board: list):
         if Puzzle8.verify_board(board): 
             self._board = board
-            self._complete = False
         else:
             print("Initialization of board failed, invalid board. Set to complete state")
             self._board = Puzzle8.complete_state
-            self._complete = True
         
         self._cost = 0
 
@@ -30,10 +28,6 @@ class Puzzle8:
             all(0 <= x <= 8 for x in board) and 
             sorted(board) == Puzzle8.complete_state
         )
-
-    # Check if board has reached complete state
-    def _check_complete(self):
-        return self._board == Puzzle8.complete_state
 
     # Checks current location of the empty space
     # Then: determines which actions are possible
@@ -54,43 +48,49 @@ class Puzzle8:
 
     # Moves empty space based on given action
     # Only allows valid actions based on current board state
-    def move(self, action: Action):
+    # Return instance of new board state
+    def move(self, action: Action) -> Puzzle8:
         possible_action: list = self.get_possible_actions()
 
         try:
-            empty_index: int = self._board.index(0)
-            match action:
-                # Swap empty space with spot 3 indexes away
-                case Action.Up:
-                    self._board[empty_index], self._board[empty_index - 3] = self._board[empty_index - 3], self._board[empty_index]
+            if possible_action.index(action):
+                empty_index: int = self._board.index(0)
+                new_board = self._board
+                match action:
+                    # Swap empty space with spot 3 indexes away
+                    case Action.Up:
+                        new_board[empty_index], new_board[empty_index - 3] = new_board[empty_index - 3], new_board[empty_index]
 
-                case Action.Down:
-                    self._board[empty_index], self._board[empty_index + 3] = self._board[empty_index + 3], self._board[empty_index]
+                    case Action.Down:
+                        new_board[empty_index], new_board[empty_index + 3] = new_board[empty_index + 3], new_board[empty_index]
 
-                # Swap empty space with spot before or after
-                case Action.Left:
-                    self._board[empty_index], self._board[empty_index - 1] = self._board[empty_index - 1], self._board[empty_index]
-                
-                case Action.Right:
-                    self._board[empty_index], self._board[empty_index + 1] = self._board[empty_index + 1], self._board[empty_index]
+                    # Swap empty space with spot before or after
+                    case Action.Left:
+                        new_board[empty_index], new_board[empty_index - 1] = new_board[empty_index - 1], new_board[empty_index]
+                    
+                    case Action.Right:
+                        new_board[empty_index], new_board[empty_index + 1] = new_board[empty_index + 1], new_board[empty_index]
 
-            # Increment move cost
-            self._cost += 1
-            # Update complete flag
-            self._complete = self._check_complete()
+                return Puzzle8(new_board)
 
         except ValueError:
             print("Attempted to move empty space with invalid action at current state, no moves done")
             return
 
-    def get_cost(self):
-        return self._cost
-
     def get_board(self):
         return self._board
 
+    # Check if board has reached complete state
     def is_complete(self):
-        return self._complete
+        return self._board == Puzzle8.complete_state
+
+    # Check if both instances are equal states
+    def __eq__(self, other):
+        return isinstance(other, Puzzle8) and self._board == other.get_board()
+
+    # Used to add instance in sets
+    def __hash__(self):
+        return hash(tuple(self._board))
 
     def __str__(self):
         t = [str(x) for x in self._board]
