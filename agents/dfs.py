@@ -3,7 +3,7 @@ from puzzle8 import Puzzle8, Action
 
 class DFSAgent(BaseAgent):
     def __init__(self, initial_board: Puzzle8):
-        super(initial_board)
+        super().__init__(initial_board)
         # Initialise data structure and other attributes here
         
     def solve(self):
