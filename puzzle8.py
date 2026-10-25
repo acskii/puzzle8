@@ -52,30 +52,28 @@ class Puzzle8:
     def move(self, action: Action) -> Puzzle8:
         possible_action: list = self.get_possible_actions()
 
-        try:
-            if possible_action.index(action):
-                empty_index: int = self._board.index(0)
-                new_board = self._board
-                match action:
-                    # Swap empty space with spot 3 indexes away
-                    case Action.Up:
-                        new_board[empty_index], new_board[empty_index - 3] = new_board[empty_index - 3], new_board[empty_index]
-
-                    case Action.Down:
-                        new_board[empty_index], new_board[empty_index + 3] = new_board[empty_index + 3], new_board[empty_index]
-
-                    # Swap empty space with spot before or after
-                    case Action.Left:
-                        new_board[empty_index], new_board[empty_index - 1] = new_board[empty_index - 1], new_board[empty_index]
-                    
-                    case Action.Right:
-                        new_board[empty_index], new_board[empty_index + 1] = new_board[empty_index + 1], new_board[empty_index]
-
-                return Puzzle8(new_board)
-
-        except ValueError:
+        if action not in possible_action: 
             print("Attempted to move empty space with invalid action at current state, no moves done")
-            return
+            return 
+
+        empty_index: int = self._board.index(0)
+        new_board = self._board.copy()
+        match action:
+            # Swap empty space with spot 3 indexes away
+            case Action.Up:
+                new_board[empty_index], new_board[empty_index - 3] = new_board[empty_index - 3], new_board[empty_index]
+
+            case Action.Down:
+                new_board[empty_index], new_board[empty_index + 3] = new_board[empty_index + 3], new_board[empty_index]
+
+            # Swap empty space with spot before or after
+            case Action.Left:
+                new_board[empty_index], new_board[empty_index - 1] = new_board[empty_index - 1], new_board[empty_index]
+            
+            case Action.Right:
+                new_board[empty_index], new_board[empty_index + 1] = new_board[empty_index + 1], new_board[empty_index]
+
+        return Puzzle8(new_board)
 
     def get_board(self):
         return self._board
