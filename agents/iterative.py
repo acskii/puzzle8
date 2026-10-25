@@ -1,4 +1,4 @@
-from base import BaseAgent
+from agents.base import BaseAgent
 from puzzle8 import Puzzle8, Action
 
 class IDFSAgent(BaseAgent):
