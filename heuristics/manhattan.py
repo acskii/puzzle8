@@ -1,4 +1,4 @@
-from base import Heuristic
+from heuristics.base import Heuristic
 from puzzle8 import Puzzle8
 
 # 1 2 5         ->          0 1 2
