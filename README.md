@@ -46,9 +46,21 @@ For A* AI agent:
 
 Can be used to construct goal path, actions taken to goal path, total cost of path, depth of path.
 
+### [report.py](./report.py)
+
 > [!WARNING]
 >
-> Any means of generating final agent reports is not implemented nor structured yet
+> Initial means of structuring agent results, not finalised yet
+
+This class displays results fed by the agent used to be viewed in the terminal.
+
+Results include:
+
+- Path to Goal
+- Path Cost
+- Nodes Expanded
+- Search Depth
+- Running Time
 
 ## Team
 
