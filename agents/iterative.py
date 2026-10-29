@@ -16,25 +16,6 @@ class IDFSAgent(BaseAgent):
     def __init__(self, initial_board: Puzzle8):
         super().__init__(initial_board)
 
-    # Create child nodes in the puzzle's action order.
-    # same as in BFS
-    def _expand(self, node: Node) -> list:
-        self.nodes_expanded += 1
-        children = []
-
-        for action in node.state.get_possible_actions():
-            children.append(
-                Node(
-                    state=node.state.move(action),
-                    parent=node,
-                    action=action,
-                    path_cost=node.path_cost + 1,
-                    depth=node.depth + 1,
-                )
-            )
-
-        return children
-
     # a 3x3 puzzle is solvable when its inversion count is even.
     def _is_solvable(self) -> bool:
         tiles = [tile for tile in self.initial_board.get_board() if tile != 0]
