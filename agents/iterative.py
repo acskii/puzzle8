@@ -76,10 +76,19 @@ class IDFSAgent(BaseAgent):
     def solve(self):
         start_time = time.time()
 
-        # stop early if the puzzle cannot be solved.
-        # return an empty report  
+        # Unsolvable board: return a report flagged as not solved.
+        # states holds just the initial board so trace() can still print it.
         if not self._is_solvable():
-            return AgentReport([], 0, 0, 0, time.time() - start_time)
+            return AgentReport(
+                path=[],
+                cost=0,
+                nodes_expanded=0,
+                search_depth=0,
+                running_time=time.time() - start_time,
+                states=[self.initial_board],
+                algorithm="Iterative Deepening DFS",
+                solved=False,
+            )
 
         self.nodes_expanded = 0
         limit = 0
@@ -88,13 +97,16 @@ class IDFSAgent(BaseAgent):
             goal = self._depth_limited(limit)
 
             if goal is not None:
-                actions, _ = self.reconstruct_path(goal)
+                # Keep the states list instead of discarding it with "_"
+                actions, states = self.reconstruct_path(goal)
                 return AgentReport(
                     path=actions,
                     cost=goal.path_cost,
                     nodes_expanded=self.nodes_expanded,
                     search_depth=goal.depth,
                     running_time=time.time() - start_time,
+                    states=states,
+                    algorithm="Iterative Deepening DFS",
                 )
 
             limit += 1

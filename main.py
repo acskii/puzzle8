@@ -2,6 +2,7 @@ import random
 from puzzle8 import Puzzle8, Action
 from agents.bfs import BFSAgent
 from agents.dfs import DFSAgent
+from agents.iterative import IDFSAgent          
 from agents.a_star import AStarAgent
 from heuristics.manhattan import Manhattan
 from heuristics.euclidean import Euclidean
@@ -29,6 +30,7 @@ if __name__ == "__main__":
     experiments = [
         (BFSAgent,  (start,)),
         (DFSAgent,  (start,)),
+        (IDFSAgent, (start,)),             
         (AStarAgent, (start, Manhattan)),
         (AStarAgent, (start, Euclidean)),
     ]
