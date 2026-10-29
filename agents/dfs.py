@@ -21,54 +21,41 @@ class DFSAgent(BaseAgent):
         # States already expanded; prevents cycles and repeated work
         self.explored = set()
 
-    # Get all children from a board state based on possible actions from that state
-    def _expand(self, node: Node) -> list:
-        self.nodes_expanded += 1
-        children = []
-        for action in node.state.get_possible_actions():
-            children.append(Node(
-                state=node.state.move(action),
-                parent=node,
-                action=action,
-                path_cost=node.path_cost + 1,
-                depth=node.depth + 1
-            ))
-        return children
-
     def solve(self):
         start_time = time.time()
-
         root = Node(self.initial_board)
         self.frontier.append(root)
         max_depth = 0
 
         while self.frontier:
-            # Take the newest node on the stack (deepest so far)
             current_node = self.frontier.pop()
             max_depth = max(max_depth, current_node.depth)
 
-            # Goal test when the node is taken from the stack
             if current_node.state.is_complete():
-                actions, _ = self.reconstruct_path(current_node)
+                actions, states = self.reconstruct_path(current_node)
                 return AgentReport(
                     path=actions,
                     cost=current_node.path_cost,
                     nodes_expanded=self.nodes_expanded,
-                    search_depth=max_depth,
-                    running_time=time.time() - start_time
+                    search_depth=len(actions),
+                    running_time=time.time() - start_time,
+                    states=states,
+                    algorithm="Depth-First Search (graph search)",
+                    max_depth_reached=max_depth
                 )
 
-            # The same state can be pushed more than once before it is popped,
-            # so skip it here if it was already expanded
             state_tuple = tuple(current_node.state.get_board())
             if state_tuple in self.explored:
                 continue
             self.explored.add(state_tuple)
 
-            # Push children that were not expanded yet; the last one pushed is explored first
             for child in reversed(self._expand(current_node)):
                 if tuple(child.state.get_board()) not in self.explored:
                     self.frontier.append(child)
 
-        # Stack is empty and no goal was found (unsolvable puzzle)
-        return AgentReport([], 0, self.nodes_expanded, max_depth, time.time() - start_time)
+        return AgentReport([], 0, self.nodes_expanded, 0,
+                        time.time() - start_time,
+                        states=[self.initial_board],
+                        algorithm="Depth-First Search (graph search)",
+                        max_depth_reached=max_depth,
+                        solved=False)

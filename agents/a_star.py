@@ -10,28 +10,12 @@ class AStarAgent(BaseAgent):
         super().__init__(initial_board)
         self.heuristic = heuristic
         
-    # Get all children from a board state based on possible actions from that state
-    def _expand(self, node: Node) -> list:
-        self.nodes_expanded += 1
-        children = []
-        for action in node.state.get_possible_actions():
-            next_state = node.state.move(action)
-            child_node = Node(
-                state = next_state,
-                parent = node,
-                action = action,
-                path_cost = node.path_cost + 1,
-                depth = node.depth + 1
-            )
-            children.append(child_node)
-        return children
-    
     def solve(self):
         start_time = time.time()
         
         root = Node(self.initial_board)
         root.h = self.heuristic.calc(root.state)
-        root.f = root.g + root.h
+        root.f = root.path_cost + root.h
 
         # Initialise data structures
         frontier = []
@@ -44,14 +28,16 @@ class AStarAgent(BaseAgent):
             _, current_node = heapq.heappop(frontier)
             
             if current_node.state.is_complete():
-                running_time = time.time() - start_time
-                actions, _ = self.reconstruct_path(current_node)
+                actions, states = self.reconstruct_path(current_node)
                 return AgentReport(
-                    path = actions,
-                    cost = current_node.path_cost,
-                    nodes_expanded = self.nodes_expanded,
-                    search_depth = max_depth,
-                    running_time = running_time
+                    path=actions,
+                    cost=current_node.path_cost,
+                    nodes_expanded=self.nodes_expanded,
+                    search_depth=len(actions),
+                    running_time=time.time() - start_time,
+                    states=states,
+                    algorithm=f"A* Search ({self.heuristic.__name__})",
+                    max_depth_reached=max_depth
                 )
             
             state_tuple = tuple(current_node.state.get_board())
@@ -68,6 +54,11 @@ class AStarAgent(BaseAgent):
                     child.f = child.g + child.h
                     heapq.heappush(frontier, (child.f, child))
                     
-        running_time = time.time() - start_time
         # Goal not found
-        return AgentReport([], 0, self.nodes_expanded, max_depth, running_time)
+        return AgentReport([], 0, self.nodes_expanded, 0,
+                    time.time() - start_time,
+                    states=[self.initial_board],
+                    algorithm=f"A* Search ({self.heuristic.__name__})",
+                    max_depth_reached=max_depth,
+                    solved=False
+                )

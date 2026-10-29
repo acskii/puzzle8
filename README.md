@@ -5,6 +5,7 @@
 - [Setup](#setup)
 - [Team Members](#team)
 - [Class Structure](#class-structure)
+- [Report](#report)
 - [Running](#running)
 
 ## Class Structure
@@ -107,6 +108,412 @@ Results include:
     ```bash
         pip install -r requirements.txt
     ```
+
+## Report
+
+### Data structures
+
+- **BFS** uses a FIFO queue
+- **DFS** uses a stack
+- **A\*** uses a heap queue (priority queue)
+
+### Main Script
+
+Uses a simple function to randomly move the empty space, for a set number of moves, to be used as the
+initial state for all implemented agents.
+
+```python
+start = random_solvable_board(4)
+```
+
+This line of code in the main.py file sets the number of moves the initial state minimaly needs to be solved.
+
+```python
+    experiments = [
+        (BFSAgent,  (start,)),
+        (DFSAgent,  (start,)),
+        (AStarAgent, (start, Manhattan)),
+        (AStarAgent, (start, Euclidean)),
+    ]
+
+    for cls, args in experiments:
+        print(f"\n####################")
+        agent  = cls(*args)
+        report = agent.solve()
+        print(report.full_report())
+```
+
+And this loop runs all agents one at a time sequentially.
+
+### Assumptions
+
+- Each move costs 1 point
+
+### Test Run
+
+Output for one run of initial state needing minimum 8 moves to completion:
+
+```bash
+>>> Random initial state chosen:
+
+6 | 3 | 2
+---------
+7 | 1 | 5
+---------
+0 | 4 | 8
+
+
+####################
+Search Report       : Breadth-First Search
+Solution found      : True
+Path to goal        : [Up, Up, Right, Down, Down, Left, Up, Up]
+Path cost           : 8
+Nodes expanded      : 91
+Search depth (goal) : 8
+Max depth reached   : 8
+Running time        : 0.000562 s
+
+------------------------------------------------------------
+Step-by-step trace
+------------------------------------------------------------
+Initial state:
+
+6 | 3 | 2
+---------
+7 | 1 | 5
+---------
+0 | 4 | 8
+
+Step 1: move Up
+
+6 | 3 | 2
+---------
+0 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 2: move Up
+
+0 | 3 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 3: move Right
+
+3 | 0 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 4: move Down
+
+3 | 1 | 2
+---------
+6 | 0 | 5
+---------
+7 | 4 | 8
+
+Step 5: move Down
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+7 | 0 | 8
+
+Step 6: move Left
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+0 | 7 | 8
+
+Step 7: move Up
+
+3 | 1 | 2
+---------
+0 | 4 | 5
+---------
+6 | 7 | 8
+
+Step 8: move Up
+
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+Goal reached in 8 steps (cost = 8).
+
+
+####################
+Search Report       : Depth-First Search (graph search)
+Solution found      : True
+Path to goal        : [Up, Up, Right, Down, Down, Left, Up, Up]
+Path cost           : 8
+Nodes expanded      : 8
+Search depth (goal) : 8
+Max depth reached   : 8
+Running time        : 0.000057 s
+
+------------------------------------------------------------
+Step-by-step trace
+------------------------------------------------------------
+Initial state:
+
+6 | 3 | 2
+---------
+7 | 1 | 5
+---------
+0 | 4 | 8
+
+Step 1: move Up
+
+6 | 3 | 2
+---------
+0 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 2: move Up
+
+0 | 3 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 3: move Right
+
+3 | 0 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 4: move Down
+
+3 | 1 | 2
+---------
+6 | 0 | 5
+---------
+7 | 4 | 8
+
+Step 5: move Down
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+7 | 0 | 8
+
+Step 6: move Left
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+0 | 7 | 8
+
+Step 7: move Up
+
+3 | 1 | 2
+---------
+0 | 4 | 5
+---------
+6 | 7 | 8
+
+Step 8: move Up
+
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+Goal reached in 8 steps (cost = 8).
+
+
+####################
+Search Report       : A* Search (Manhattan)
+Solution found      : True
+Path to goal        : [Up, Up, Right, Down, Down, Left, Up, Up]
+Path cost           : 8
+Nodes expanded      : 8
+Search depth (goal) : 8
+Max depth reached   : 7
+Running time        : 0.000095 s
+
+------------------------------------------------------------
+Step-by-step trace
+------------------------------------------------------------
+Initial state:
+
+6 | 3 | 2
+---------
+7 | 1 | 5
+---------
+0 | 4 | 8
+
+Step 1: move Up
+
+6 | 3 | 2
+---------
+0 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 2: move Up
+
+0 | 3 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 3: move Right
+
+3 | 0 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 4: move Down
+
+3 | 1 | 2
+---------
+6 | 0 | 5
+---------
+7 | 4 | 8
+
+Step 5: move Down
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+7 | 0 | 8
+
+Step 6: move Left
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+0 | 7 | 8
+
+Step 7: move Up
+
+3 | 1 | 2
+---------
+0 | 4 | 5
+---------
+6 | 7 | 8
+
+Step 8: move Up
+
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+Goal reached in 8 steps (cost = 8).
+
+
+####################
+Search Report       : A* Search (Euclidean)
+Solution found      : True
+Path to goal        : [Up, Up, Right, Down, Down, Left, Up, Up]
+Path cost           : 8
+Nodes expanded      : 8
+Search depth (goal) : 8
+Max depth reached   : 7
+Running time        : 0.000090 s
+
+------------------------------------------------------------
+Step-by-step trace
+------------------------------------------------------------
+Initial state:
+
+6 | 3 | 2
+---------
+7 | 1 | 5
+---------
+0 | 4 | 8
+
+Step 1: move Up
+
+6 | 3 | 2
+---------
+0 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 2: move Up
+
+0 | 3 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 3: move Right
+
+3 | 0 | 2
+---------
+6 | 1 | 5
+---------
+7 | 4 | 8
+
+Step 4: move Down
+
+3 | 1 | 2
+---------
+6 | 0 | 5
+---------
+7 | 4 | 8
+
+Step 5: move Down
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+7 | 0 | 8
+
+Step 6: move Left
+
+3 | 1 | 2
+---------
+6 | 4 | 5
+---------
+0 | 7 | 8
+
+Step 7: move Up
+
+3 | 1 | 2
+---------
+0 | 4 | 5
+---------
+6 | 7 | 8
+
+Step 8: move Up
+
+0 | 1 | 2
+---------
+3 | 4 | 5
+---------
+6 | 7 | 8
+
+Goal reached in 8 steps (cost = 8).
+```
 
 ## Running
 
